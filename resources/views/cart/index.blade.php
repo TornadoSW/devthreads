@@ -3,74 +3,84 @@
 @section('title', 'Your Cart - DevThreads')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold mb-8">Your Cart</h1>
+<div class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+    <h1 class="text-3xl md:text-4xl font-bold mb-10">Your <span class="gradient-text">Cart</span></h1>
 
     @if($cartItems->count())
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="text-left py-3 px-4 font-semibold text-sm text-gray-600">Product</th>
-                        <th class="text-center py-3 px-4 font-semibold text-sm text-gray-600">Size</th>
-                        <th class="text-center py-3 px-4 font-semibold text-sm text-gray-600">Qty</th>
-                        <th class="text-right py-3 px-4 font-semibold text-sm text-gray-600">Price</th>
-                        <th class="py-3 px-4"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y">
-                    @foreach($cartItems as $item)
-                        <tr>
-                            <td class="py-4 px-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-2xl shrink-0">
-                                        @if($item->product->image)
-                                            <img src="{{ asset('storage/' . $item->product->image) }}" alt="" class="w-full h-full object-cover rounded">
-                                        @else
-                                            👕
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <a href="{{ route('products.show', $item->product->slug) }}" class="font-medium hover:text-brand-600">
-                                            {{ $item->product->name }}
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="py-4 px-4 text-center">{{ $item->size }}</td>
-                            <td class="py-4 px-4 text-center">{{ $item->quantity }}</td>
-                            <td class="py-4 px-4 text-right font-medium">${{ number_format($item->product->price * $item->quantity, 2) }}</td>
-                            <td class="py-4 px-4 text-right">
-                                <form action="{{ route('cart.remove', $item) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="space-y-4">
+            @php
+                $cartImages = [
+                    'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=200&q=80',
+                    'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=200&q=80',
+                    'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=200&q=80',
+                    'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=200&q=80',
+                ];
+            @endphp
+            @foreach($cartItems as $ci => $item)
+                <div class="glass rounded-2xl p-4 md:p-5 flex items-center gap-4 md:gap-6">
+                    {{-- Image --}}
+                    <div class="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden shrink-0 relative">
+                        @if($item->product->image)
+                            <img src="{{ asset('storage/' . $item->product->image) }}" alt="" class="w-full h-full object-cover">
+                        @else
+                            <img src="{{ $cartImages[$ci % count($cartImages)] }}" alt="" class="w-full h-full object-cover">
+                        @endif
+                    </div>
+
+                    {{-- Details --}}
+                    <div class="flex-1 min-w-0">
+                        <a href="{{ route('products.show', $item->product->slug) }}"
+                           class="font-semibold text-gray-200 hover:text-accent-400 transition truncate block">
+                            {{ $item->product->name }}
+                        </a>
+                        <div class="flex items-center gap-3 mt-1.5 text-sm text-gray-500">
+                            <span class="glass rounded-md px-2 py-0.5 text-xs text-gray-400">Size: {{ $item->size }}</span>
+                            <span>Qty: {{ $item->quantity }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Price + Remove --}}
+                    <div class="text-right shrink-0">
+                        <p class="font-bold gradient-text text-lg">${{ number_format($item->product->price * $item->quantity, 2) }}</p>
+                        <form action="{{ route('cart.remove', $item) }}" method="POST" class="mt-2">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-400/70 hover:text-red-400 text-xs flex items-center gap-1 ml-auto transition">
+                                <img src="https://api.iconify.design/lucide:trash-2.svg?color=%23f87171&width=12&height=12" alt="">
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
         </div>
 
         {{-- Total --}}
-        <div class="mt-6 bg-white rounded-xl shadow-md p-6">
-            <div class="flex justify-between items-center text-xl font-bold">
-                <span>Total</span>
-                <span class="text-brand-700">${{ number_format($total, 2) }}</span>
+        <div class="glass-light rounded-2xl p-6 md:p-8 mt-8 border-gradient">
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400 font-medium">Subtotal</span>
+                <span class="text-2xl font-bold gradient-text">${{ number_format($total, 2) }}</span>
             </div>
+            <div class="flex justify-between items-center mt-2 text-sm text-gray-500">
+                <span>Shipping</span>
+                <span>{{ $total >= 50 ? 'Free' : 'Calculated at checkout' }}</span>
+            </div>
+            <div class="border-t border-white/5 my-5"></div>
             <button disabled
-                    class="mt-4 w-full bg-brand-600 text-white font-semibold py-3 px-8 rounded-lg opacity-75 cursor-not-allowed">
+                    class="w-full btn-glow text-white font-semibold py-4 px-8 rounded-xl text-lg opacity-75 cursor-not-allowed inline-flex items-center justify-center gap-2">
+                <img src="https://api.iconify.design/lucide:lock.svg?color=white&width=18&height=18" alt="">
                 Checkout (Coming Soon)
             </button>
-            <p class="text-xs text-gray-500 text-center mt-2">Stripe checkout integration coming in next update.</p>
+            <p class="text-xs text-gray-600 text-center mt-3">Stripe checkout integration coming in next update.</p>
         </div>
     @else
-        <div class="text-center py-16">
-            <p class="text-6xl mb-4">🛒</p>
-            <p class="text-xl text-gray-500 mb-4">Your cart is empty</p>
+        <div class="glass rounded-2xl text-center py-20">
+            <img src="https://api.iconify.design/lucide:shopping-cart.svg?color=%234b5563&width=64&height=64" alt="" class="mx-auto mb-5 opacity-50">
+            <p class="text-xl text-gray-400 mb-2">Your cart is empty</p>
+            <p class="text-sm text-gray-600 mb-8">Add some developer swag to get started</p>
             <a href="{{ route('products.index') }}"
-               class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-8 py-3 rounded-lg inline-block transition">
+               class="btn-glow text-white font-semibold px-8 py-3 rounded-xl inline-flex items-center gap-2">
+                <img src="https://api.iconify.design/lucide:shopping-bag.svg?color=white&width=18&height=18" alt="">
                 Start Shopping
             </a>
         </div>
