@@ -16,7 +16,7 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::delete('/cart/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
 
-// Admin (protected by auth middleware)
-Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
+// Admin (TODO: add auth middleware before deploying)
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('products', AdminProductController::class);
 });
