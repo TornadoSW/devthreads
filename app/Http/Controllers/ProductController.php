@@ -32,7 +32,7 @@ class ProductController extends Controller
             $query->latest();
         }
 
-        $products = $query->paginate(12);
+        $products = $query->with('category')->paginate(12);
         $categories = Category::all();
 
         return view('products.index', compact('products', 'categories'));
@@ -40,7 +40,8 @@ class ProductController extends Controller
 
     public function show(string $slug)
     {
-        $product = Product::where('slug', $slug)
+        $product = Product::with('category')
+            ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 

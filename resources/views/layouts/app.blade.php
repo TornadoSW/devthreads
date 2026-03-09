@@ -7,6 +7,15 @@
     <title>@yield('title', 'DevThreads - Developer T-Shirts & Hoodies')</title>
     <meta name="description" content="@yield('meta_description', 'Funny developer t-shirts and hoodies. Git push your style with coding humor apparel.')">
 
+    {{-- Open Graph / Social Sharing --}}
+    <meta property="og:title" content="@yield('title', 'DevThreads - Developer T-Shirts & Hoodies')">
+    <meta property="og:description" content="@yield('meta_description', 'Premium developer apparel — t-shirts, hoodies, mugs & stickers with coding humor.')">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="@yield('og_image', asset('images/og-default.png'))">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'DevThreads')">
+    <meta name="twitter:description" content="@yield('meta_description', 'Premium developer apparel for engineers who push code and push style.')">
+
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
